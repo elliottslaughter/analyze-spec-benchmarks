@@ -11,10 +11,10 @@ from contextlib import contextmanager
 
 try:
     import cairo
-    try:
-        import PIL.Image
-    except:
-        sys.stderr.write('PIL not installed. HQ antialiasing is disabled.\n')
+    # try:
+    #     import PIL.Image
+    # except:
+    #     sys.stderr.write('PIL not installed. HQ antialiasing is disabled.\n')
 except:
     sys.stderr.write('Pycairo not installed. Writing .txt files only.\n')
 
@@ -386,7 +386,8 @@ def RenderGraph(mode, resultsByBrand, outPath):
         surface = HQSurface(w, h)
         cr = surface.cr
     else:
-        surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+        # surface = cairo.ImageSurface(cairo.FORMAT_ARGB32, w, h)
+        surface = cairo.PDFSurface(outPath, w, h)
         cr = cairo.Context(surface)
     cr.set_line_width(1)
     cr.translate(28, 37)
@@ -492,7 +493,8 @@ def RenderGraph(mode, resultsByBrand, outPath):
             cr.set_source_rgb(0, 0, 0)
             alignText(cr, legendFont, 0, brand, 6, listOrder * spacing + 3)
     
-    surface.write_to_png(outPath)
+    # surface.write_to_png(outPath)
+    cr.save()
 
 
 #---------------------------------------------------------
@@ -586,4 +588,4 @@ for MODE in ['INT', 'FP']:
 
     # Render the graph.
     if 'cairo' in globals():
-        RenderGraph(MODE, resultsByBrand, '%s_graph.png' % MODE.lower())
+        RenderGraph(MODE, resultsByBrand, '%s_graph.pdf' % MODE.lower())
